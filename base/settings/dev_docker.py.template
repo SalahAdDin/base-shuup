@@ -1,0 +1,109 @@
+from __future__ import absolute_import, unicode_literals
+
+from .base import *
+
+DEBUG = True
+
+for template_engine in TEMPLATES:
+    template_engine['OPTIONS']['debug'] = True
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', ]
+
+INTERNAL_IPS = ['::1', '172.18.0.1']
+# Modify second value accord your Docker configuration:
+#    docker inspect uzman.web | grep -e '"Gateway"'
+
+INSTALLED_APPS += [
+    'wagtail.contrib.wagtailstyleguide',
+    'debug_toolbar',
+    'naomi',
+]
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        # 'PASSWORD': 'Uzman2017',
+        'HOST': 'db',
+        'PORT': '5432',
+        'CONN_MAX_AGE': 1000,
+        'ATOMIC_REQUESTS': True,
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        'KEY_PREFIX': 'uzman',
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+        }
+    }
+}
+
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.wagtailsearch.backends.elasticsearch5',
+        'URLS': ['http://elasticsearch:9200'],
+        'INDEX': 'uzman',
+        'ATOMIC_REBUILD': True,
+        'TIMEOUT': 5,
+        'OPTIONS': {},
+        'INDEX_SETTINGS': {},
+    }
+}
+
+CACHE_MIDDLEWARE_SECONDS = 10
+
+# Celery
+CELERY_TASK_ALWAYS_EAGER = True
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'naomi.mail.backends.naomi.NaomiBackend'
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'tmp_email')
+
+WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = True
+
+# Analytics stuff
+GOOGLE_TAG_MANAGER = False
+GOOGLE_ANALYTICS_KEY = False
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/media/'
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+]
+
+# Webpack
+WEBPACK_LOADER['DEFAULT']['CACHE'] = True
+
+# Celery
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_SEND_TASK_ERROR_EMAILS = True
+
+if DEBUG:
+    SWAGGER_SETTINGS["SUPPORTED_SUBMIT_METHODS"].extend(["post", "patch", "delete", "put"])
+
+try:
+    from .local import *
+except ImportError:
+    pass
