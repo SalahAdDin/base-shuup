@@ -35,9 +35,9 @@ DATABASES = {
 }
 
 # TODO: Review this options, follow tutorial steps
-AWS_STORAGE_BUCKET_NAME = 'blog-uzman-tech'
-AWS_ACCESS_KEY_ID = 'AKIAJF3FGE5LDIFIVSRQ'
-AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = ''
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
 AWS_HEADERS = {
     'Expires': 'Thu, 31 Dec 2099 20:00:00 GMT',
     'Cache-Control': 'max-age=94608000',
